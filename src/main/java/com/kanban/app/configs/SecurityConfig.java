@@ -35,7 +35,14 @@ public class SecurityConfig {
                                                 .requestMatchers("/swagger-ui/**").permitAll()
                                                 .requestMatchers("/v3/api-docs/**").permitAll()
                                                 // Authenticated routes
-                                                .requestMatchers("/v1/users/**").authenticated()
+                                                .requestMatchers("/api/v1/users/**").authenticated()
+                                                .requestMatchers("/api/v1/projects/**").authenticated()
+                                                .requestMatchers("/api/v1/boards/**").authenticated()
+                                                .requestMatchers("/api/v1/labels/**").authenticated()
+                                                .requestMatchers("/api/v1/buckets/**").authenticated()
+                                                .requestMatchers("/api/v1/bucket-labels/**").authenticated()
+                                                .requestMatchers("/api/v1/tasks/**").authenticated()
+                                                // Another requests require auth by default
                                                 .anyRequest().authenticated())
                                 .sessionManagement(session -> session
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
