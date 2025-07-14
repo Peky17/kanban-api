@@ -32,11 +32,10 @@ public class SecurityConfig {
                         .authorizeHttpRequests(auth -> auth
                                 // Public routes
                                 .requestMatchers("/api/v1/auth/**").permitAll()
-                                .requestMatchers("/api/v1/schedule/**").permitAll()
                                 .requestMatchers("/swagger-ui/**").permitAll()
                                 .requestMatchers("/v3/api-docs/**").permitAll()
-                                .requestMatchers("/templates/email-template").permitAll()
                                 // Authenticated routes
+                                .requestMatchers("/api/v1/users/**").permitAll()
                                 .anyRequest().authenticated()
                         )
                         .sessionManagement(session -> session

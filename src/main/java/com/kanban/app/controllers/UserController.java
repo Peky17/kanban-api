@@ -10,11 +10,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kanban.app.models.dto.UserDTO;
+import com.kanban.app.models.entities.User;
+import com.kanban.app.services.auth.AuthService;
 import com.kanban.app.services.interfaces.UserService;
 
 @RestController
@@ -22,6 +23,8 @@ import com.kanban.app.services.interfaces.UserService;
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private AuthService authService;
 
     @GetMapping
     public List<UserDTO> getAllUsers() {
@@ -39,25 +42,24 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) {
-        UserDTO savedUser = userService.save(userDTO);
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        User savedUser = authService.signup(user);
         return ResponseEntity.ok(savedUser);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> updateUser(
-            @RequestHeader("Authorization") String bearerToken,
+    public ResponseEntity<User> updateUser(
             @PathVariable Long id,
-            @RequestBody UserDTO userDTO
+            @RequestBody User user
     ) {
-        userDTO.setId(id);
-        UserDTO updatedUser = userService.save(userDTO);
+        user.setId(id);
+        // Para actualizar, se puede reutilizar signup para asegurar el password codificado
+        User updatedUser = authService.signup(user);
         return ResponseEntity.ok(updatedUser);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(
-            @RequestHeader("Authorization") String bearerToken,
             @PathVariable Long id
     ) {
         userService.delete(id);
