@@ -19,8 +19,8 @@ public class SecurityConfig {
         private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
         public SecurityConfig(
-                AuthenticationProvider authenticationProvider,
-                JwtAuthenticationFilter jwtAuthenticationFilter) {
+                        AuthenticationProvider authenticationProvider,
+                        JwtAuthenticationFilter jwtAuthenticationFilter) {
                 this.authenticationProvider = authenticationProvider;
                 this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         }
@@ -28,21 +28,19 @@ public class SecurityConfig {
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 return http
-                        .csrf(AbstractHttpConfigurer::disable)
-                        .authorizeHttpRequests(auth -> auth
-                                // Public routes
-                                .requestMatchers("/api/v1/auth/**").permitAll()
-                                .requestMatchers("/swagger-ui/**").permitAll()
-                                .requestMatchers("/v3/api-docs/**").permitAll()
-                                // Authenticated routes
-                                .requestMatchers("/api/v1/users/**").permitAll()
-                                .anyRequest().authenticated()
-                        )
-                        .sessionManagement(session -> session
-                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                        )
-                        .authenticationProvider(authenticationProvider)
-                        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                        .build();
+                                .csrf(AbstractHttpConfigurer::disable)
+                                .authorizeHttpRequests(auth -> auth
+                                                // Public routes
+                                                .requestMatchers("/api/v1/auth/**").permitAll()
+                                                .requestMatchers("/swagger-ui/**").permitAll()
+                                                .requestMatchers("/v3/api-docs/**").permitAll()
+                                                // Authenticated routes
+                                                .requestMatchers("/v1/users/**").authenticated()
+                                                .anyRequest().authenticated())
+                                .sessionManagement(session -> session
+                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                                .authenticationProvider(authenticationProvider)
+                                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                                .build();
         }
 }
