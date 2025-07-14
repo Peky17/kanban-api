@@ -1,4 +1,4 @@
-package com.kanban.app.models.repositories;
+package com.kanban.app.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

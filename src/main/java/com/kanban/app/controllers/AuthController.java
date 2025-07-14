@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.kanban.app.models.dto.LoginDTO;
 import com.kanban.app.models.dto.TokenDTO;
-import com.kanban.app.models.entities.AdministratorEntity;
+import com.kanban.app.models.entities.User;
 import com.kanban.app.services.auth.AuthService;
 import com.kanban.app.services.auth.JwtService;
 
@@ -29,7 +29,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<TokenDTO> authenticate(@RequestBody LoginDTO loginDTO) {
-        AdministratorEntity authenticatedUser = authService.authenticate(loginDTO);
+        User authenticatedUser = authService.authenticate(loginDTO);
         String jwtToken = jwtService.generateToken(authenticatedUser);
         TokenDTO loginResponse = new TokenDTO();
         loginResponse.setToken(jwtToken);
@@ -38,15 +38,15 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AdministratorEntity> register(@RequestBody AdministratorEntity administratorEntity) {
-        AdministratorEntity registeredUser = authService.signup(administratorEntity);
+    public ResponseEntity<User> register(@RequestBody User user) {
+        User registeredUser = authService.signup(user);
         return ResponseEntity.ok(registeredUser);
     }
 
     @GetMapping("/me")
-    public ResponseEntity<AdministratorEntity> authenticatedUser() {
+    public ResponseEntity<User> authenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        AdministratorEntity currentUser = (AdministratorEntity) authentication.getPrincipal();
+        User currentUser = (User) authentication.getPrincipal();
         return ResponseEntity.ok(currentUser);
     }
 }
