@@ -14,4 +14,4 @@ COPY target/congratulations-api-0.0.1-SNAPSHOT.jar /congratulations-api/congrats
 EXPOSE 8080
 
 #execute the application
-ENTRYPOINT ["java","-jar","congrats-api.jar"]
+ENTRYPOINT ["java","-jar","kanban-api.jar"]
