@@ -2,16 +2,13 @@ package com.kanban.app.models.entities;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 
@@ -109,6 +106,4 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
-    
 }

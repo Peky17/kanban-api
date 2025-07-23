@@ -3,14 +3,8 @@ package com.kanban.app.models.entities;
 import java.time.LocalDate;
 import java.util.List;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 
 @Entity
 public class Project {
@@ -23,11 +17,12 @@ public class Project {
     private LocalDate startDate;
     private LocalDate dueDate;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "created_by_id")
     private User createdBy;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = false)
+    @JsonManagedReference
     private List<Board> boards;
 
     public Project() {}

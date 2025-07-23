@@ -3,6 +3,7 @@ package com.kanban.app.services.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.kanban.app.services.auth.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,8 @@ import com.kanban.app.services.interfaces.ProjectService;
 public class ProjectServiceImpl implements ProjectService {
     @Autowired
     private ProjectRepository projectRepository;
+    @Autowired
+    AuthService authService;
 
     @Override
     public ProjectDTO findById(Long id) {
@@ -46,7 +49,11 @@ public class ProjectServiceImpl implements ProjectService {
         dto.setCreatedAt(project.getCreatedAt());
         dto.setStartDate(project.getStartDate());
         dto.setDueDate(project.getDueDate());
-        if (project.getCreatedBy() != null) dto.setCreatedBy(new EntityIdentifier(project.getCreatedBy().getId()));
+        // User identity relationship
+        EntityIdentifier userIdentity = new EntityIdentifier();
+        Long userId = project.getCreatedBy().getId();
+        userIdentity.setId(userId);
+        dto.setCreatedBy(userIdentity);
         // Boards omitted for simplicity
         return dto;
     }
@@ -59,7 +66,9 @@ public class ProjectServiceImpl implements ProjectService {
         entity.setCreatedAt(dto.getCreatedAt());
         entity.setStartDate(dto.getStartDate());
         entity.setDueDate(dto.getDueDate());
-        // createdBy and boards omitted for simplicity
+        // User relationship (set the user in session)
+        entity.setCreatedBy(authService.getCurrentUser());
+        // boards omitted for simplicity
         return entity;
     }
 }

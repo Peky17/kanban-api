@@ -43,6 +43,7 @@ public class UserServiceImpl implements UserService {
         dto.setId(user.getId());
         dto.setName(user.getName());
         dto.setEmail(user.getEmail());
+        dto.setPassword(user.getPassword());
         dto.setCellphone(user.getCellphone());
         if (user.getRole() != null) dto.setRole(new EntityIdentifier(user.getRole().getId()));
         return dto;
@@ -53,6 +54,7 @@ public class UserServiceImpl implements UserService {
         entity.setId(dto.getId());
         entity.setName(dto.getName());
         entity.setEmail(dto.getEmail());
+        entity.setPassword(dto.getPassword());
         entity.setCellphone(dto.getCellphone());
         // role omitted for simplicity
         return entity;

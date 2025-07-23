@@ -1,8 +1,12 @@
 package com.kanban.app.services.impl;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.kanban.app.models.entities.Board;
+import com.kanban.app.services.auth.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +20,8 @@ import com.kanban.app.services.interfaces.BucketService;
 public class BucketServiceImpl implements BucketService {
     @Autowired
     private BucketRepository bucketRepository;
+    @Autowired
+    private AuthService authService;
 
     @Override
     public BucketDTO findById(Long id) {
@@ -38,6 +44,30 @@ public class BucketServiceImpl implements BucketService {
         bucketRepository.deleteById(id);
     }
 
+    @Override
+    public Set<BucketDTO> getBucketsByBoardId(Long id){
+        List<Bucket> bucketList = bucketRepository.findAllByBoardId(id);
+        Set<BucketDTO> bucketSet = new HashSet<>();
+        for(Bucket bucket : bucketList){
+            BucketDTO dto = new BucketDTO();
+            dto.setId(bucket.getId());
+            dto.setName(bucket.getName());
+            dto.setDescription(bucket.getDescription());
+            dto.setColor(bucket.getColor());
+            dto.setCreatedAt(bucket.getCreatedAt());
+            // board relationship
+            EntityIdentifier boardIdentity = new EntityIdentifier();
+            boardIdentity.setId(bucket.getBoard().getId());
+            dto.setBoard(boardIdentity);
+            // user relationship
+            EntityIdentifier userIdentity = new EntityIdentifier();
+            userIdentity.setId(bucket.getCreatedBy().getId());
+            dto.setCreatedBy(userIdentity);
+            bucketSet.add(dto);
+        }
+        return bucketSet;
+    }
+
     private BucketDTO toDTO(Bucket bucket) {
         BucketDTO dto = new BucketDTO();
         dto.setId(bucket.getId());
@@ -45,8 +75,15 @@ public class BucketServiceImpl implements BucketService {
         dto.setColor(bucket.getColor());
         dto.setDescription(bucket.getDescription());
         dto.setCreatedAt(bucket.getCreatedAt());
-        if (bucket.getCreatedBy() != null) dto.setCreatedBy(new EntityIdentifier(bucket.getCreatedBy().getId()));
-        if (bucket.getBoard() != null) dto.setBoard(new EntityIdentifier(bucket.getBoard().getId()));
+        // Board relationship
+        EntityIdentifier boardIdentity = new EntityIdentifier();
+        boardIdentity.setId(bucket.getBoard().getId());
+        dto.setBoard(boardIdentity);
+        // User identity relationship
+        EntityIdentifier userIdentity = new EntityIdentifier();
+        Long userId = bucket.getCreatedBy().getId();
+        userIdentity.setId(userId);
+        dto.setCreatedBy(userIdentity);
         // Tasks omitted for simplicity
         return dto;
     }
@@ -58,7 +95,14 @@ public class BucketServiceImpl implements BucketService {
         entity.setColor(dto.getColor());
         entity.setDescription(dto.getDescription());
         entity.setCreatedAt(dto.getCreatedAt());
-        // createdBy, board, tasks omitted for simplicity
+        // Board relationship
+        Long boardId = dto.getBoard().getId();
+        Board board = new Board();
+        board.setId(boardId);
+        entity.setBoard(board);
+        // User relationship (set the user in session)
+        entity.setCreatedBy(authService.getCurrentUser());
+        // tasks omitted for simplicity
         return entity;
     }
 }

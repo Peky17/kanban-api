@@ -3,15 +3,13 @@ package com.kanban.app.models.entities;
 import java.time.LocalDate;
 import java.util.List;
 
-import jakarta.persistence.CascadeType;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 
 @Entity
 public class Bucket {
@@ -23,16 +21,17 @@ public class Bucket {
     private String description;
     private LocalDate createdAt;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "created_by_id")
     private User createdBy;
 
     @ManyToOne
     @JoinColumn(name = "board_id")
+    @JsonBackReference
     private Board board;
 
-    @OneToMany(mappedBy = "bucket", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Task> tasks;
+    //@OneToMany(mappedBy = "bucket", cascade = CascadeType.ALL, orphanRemoval = false)
+    //private List<Task> tasks;
 
     public Bucket() {}
     public Bucket(String name, String color, String description, LocalDate createdAt) {
@@ -41,7 +40,7 @@ public class Bucket {
         this.description = description;
         this.createdAt = createdAt;
     }
-    public Bucket(Long id, String name, String color, String description, LocalDate createdAt, User createdBy, Board board, List<Task> tasks) {
+    public Bucket(Long id, String name, String color, String description, LocalDate createdAt, User createdBy, Board board) {
         this.id = id;
         this.name = name;
         this.color = color;
@@ -49,7 +48,7 @@ public class Bucket {
         this.createdAt = createdAt;
         this.createdBy = createdBy;
         this.board = board;
-        this.tasks = tasks;
+        //this.tasks = tasks;
     }
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -65,6 +64,4 @@ public class Bucket {
     public void setCreatedBy(User createdBy) { this.createdBy = createdBy; }
     public Board getBoard() { return board; }
     public void setBoard(Board board) { this.board = board; }
-    public List<Task> getTasks() { return tasks; }
-    public void setTasks(List<Task> tasks) { this.tasks = tasks; }
 }

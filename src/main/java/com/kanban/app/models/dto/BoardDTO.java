@@ -10,7 +10,6 @@ public class BoardDTO {
     private LocalDate createdAt;
     private EntityIdentifier createdBy;
     private EntityIdentifier project;
-    private List<EntityIdentifier> buckets;
 
     public BoardDTO() {}
 
@@ -26,6 +25,4 @@ public class BoardDTO {
     public void setCreatedBy(EntityIdentifier createdBy) { this.createdBy = createdBy; }
     public EntityIdentifier getProject() { return project; }
     public void setProject(EntityIdentifier project) { this.project = project; }
-    public List<EntityIdentifier> getBuckets() { return buckets; }
-    public void setBuckets(List<EntityIdentifier> buckets) { this.buckets = buckets; }
 }

@@ -1,7 +1,9 @@
 package com.kanban.app.controllers;
 
 import java.util.List;
+import java.util.Set;
 
+import com.kanban.app.models.dto.SubtaskDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,6 +33,13 @@ public class TaskController {
     public ResponseEntity<TaskDTO> getById(@PathVariable Long id) {
         TaskDTO dto = taskService.findById(id);
         if (dto != null) return ResponseEntity.ok(dto);
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/tasks-bucket/{bucketId}")
+    public ResponseEntity<Set<TaskDTO>> getSubtasksByTaskId(@PathVariable Long bucketId) {
+        Set<TaskDTO> list = taskService.getAllTasksByBucketId(bucketId);
+        if (list != null) return ResponseEntity.ok(list);
         return ResponseEntity.notFound().build();
     }
 

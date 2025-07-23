@@ -1,8 +1,13 @@
 package com.kanban.app.services.impl;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.kanban.app.models.entities.Project;
+import com.kanban.app.models.entities.User;
+import com.kanban.app.services.auth.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +21,8 @@ import com.kanban.app.services.interfaces.BoardService;
 public class BoardServiceImpl implements BoardService {
     @Autowired
     private BoardRepository boardRepository;
+    @Autowired
+    private AuthService authService;
 
     @Override
     public BoardDTO findById(Long id) {
@@ -38,15 +45,44 @@ public class BoardServiceImpl implements BoardService {
         boardRepository.deleteById(id);
     }
 
+    @Override
+    public Set<BoardDTO> getBoardsByProjectId(Long id){
+        List<Board> boardList = boardRepository.findAllByProjectId(id);
+        Set<BoardDTO> boardSet = new HashSet<>();
+        for(Board board : boardList){
+            BoardDTO dto = new BoardDTO();
+            dto.setId(board.getId());
+            dto.setName(board.getName());
+            dto.setDescription(board.getDescription());
+            dto.setCreatedAt(board.getCreatedAt());
+            // Project associated
+            EntityIdentifier projectIdentity = new EntityIdentifier();
+            projectIdentity.setId(board.getProject().getId());
+            dto.setProject(projectIdentity);
+            // User associated
+            EntityIdentifier userIdentity = new EntityIdentifier();
+            userIdentity.setId(board.getCreatedBy().getId());
+            dto.setCreatedBy(userIdentity);
+            boardSet.add(dto);
+        }
+        return boardSet;
+    }
+
     private BoardDTO toDTO(Board board) {
         BoardDTO dto = new BoardDTO();
         dto.setId(board.getId());
         dto.setName(board.getName());
         dto.setDescription(board.getDescription());
         dto.setCreatedAt(board.getCreatedAt());
-        if (board.getCreatedBy() != null) dto.setCreatedBy(new EntityIdentifier(board.getCreatedBy().getId()));
-        if (board.getProject() != null) dto.setProject(new EntityIdentifier(board.getProject().getId()));
-        // Buckets omitted for simplicity
+        // Project relationship
+        EntityIdentifier projectIdentity = new EntityIdentifier();
+        projectIdentity.setId(board.getProject().getId());
+        dto.setProject(projectIdentity);
+        // User identity relationship
+        EntityIdentifier userIdentity = new EntityIdentifier();
+        Long userId = board.getCreatedBy().getId();
+        userIdentity.setId(userId);
+        dto.setCreatedBy(userIdentity);
         return dto;
     }
 
@@ -56,7 +92,13 @@ public class BoardServiceImpl implements BoardService {
         entity.setName(dto.getName());
         entity.setDescription(dto.getDescription());
         entity.setCreatedAt(dto.getCreatedAt());
-        // createdBy, project, buckets omitted for simplicity
+        // Project relationship
+        Long projectId = dto.getProject().getId();
+        Project project = new Project();
+        project.setId(projectId);
+        entity.setProject(project);
+        // User relationship (set the user in session)
+        entity.setCreatedBy(authService.getCurrentUser());
         return entity;
     }
 }

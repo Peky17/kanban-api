@@ -22,9 +22,10 @@ public class Task {
     private LocalDate createdAt;
     private String priority;
     private LocalDate startDate;
+    private LocalDate dueDate;
     private String description;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "created_by_id")
     private User createdBy;
 
@@ -32,18 +33,19 @@ public class Task {
     @JoinColumn(name = "bucket_id")
     private Bucket bucket;
 
-    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = false)
     private List<Subtask> subtasks;
 
     public Task() {}
-    public Task(String name, LocalDate createdAt, String priority, LocalDate startDate, String description) {
+    public Task(String name, LocalDate createdAt, String priority, LocalDate startDate, LocalDate dueDate, String description) {
         this.name = name;
         this.createdAt = createdAt;
         this.priority = priority;
         this.startDate = startDate;
         this.description = description;
+        this.dueDate = dueDate;
     }
-    public Task(Long id, String name, LocalDate createdAt, String priority, LocalDate startDate, String description, User createdBy, Bucket bucket, List<Subtask> subtasks) {
+    public Task(Long id, String name, LocalDate createdAt, String priority, LocalDate startDate, LocalDate dueDate, String description, User createdBy, Bucket bucket, List<Subtask> subtasks) {
         this.id = id;
         this.name = name;
         this.createdAt = createdAt;
@@ -53,6 +55,7 @@ public class Task {
         this.createdBy = createdBy;
         this.bucket = bucket;
         this.subtasks = subtasks;
+        this.dueDate = dueDate;
     }
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -70,6 +73,15 @@ public class Task {
     public void setCreatedBy(User createdBy) { this.createdBy = createdBy; }
     public Bucket getBucket() { return bucket; }
     public void setBucket(Bucket bucket) { this.bucket = bucket; }
+
+    public LocalDate getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
+    }
+
     public List<Subtask> getSubtasks() { return subtasks; }
     public void setSubtasks(List<Subtask> subtasks) { this.subtasks = subtasks; }
 }

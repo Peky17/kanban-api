@@ -3,6 +3,8 @@ package com.kanban.app.models.entities;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,7 +13,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 
 @Entity
 public class Board {
@@ -22,15 +23,18 @@ public class Board {
     private String description;
     private LocalDate createdAt;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "created_by_id")
+    @JsonBackReference
     private User createdBy;
 
     @ManyToOne
     @JoinColumn(name = "project_id")
+    @JsonBackReference
     private Project project;
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = false)
+    @JsonManagedReference
     private List<Bucket> buckets;
 
     public Board() {}

@@ -42,6 +42,9 @@ public class SecurityConfig {
                                                 .requestMatchers("/api/v1/buckets/**").authenticated()
                                                 .requestMatchers("/api/v1/bucket-labels/**").authenticated()
                                                 .requestMatchers("/api/v1/tasks/**").authenticated()
+                                                .requestMatchers("/api/v1/subtasks/**").authenticated()
+                                                .requestMatchers("/api/v1/project-users/**").authenticated()
+                                                .requestMatchers("/api/v1/user-tasks/**").authenticated()
                                                 // Another requests require auth by default
                                                 .anyRequest().authenticated())
                                 .sessionManagement(session -> session

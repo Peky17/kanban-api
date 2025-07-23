@@ -1,7 +1,9 @@
 package com.kanban.app.controllers;
 
 import java.util.List;
+import java.util.Set;
 
+import com.kanban.app.models.dto.SubtaskDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,6 +33,13 @@ public class BoardController {
     public ResponseEntity<BoardDTO> getById(@PathVariable Long id) {
         BoardDTO dto = boardService.findById(id);
         if (dto != null) return ResponseEntity.ok(dto);
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/project-boards/{projectId}")
+    public ResponseEntity<Set<BoardDTO>> getBoardsByProjectId(@PathVariable Long projectId) {
+        Set<BoardDTO> list = boardService.getBoardsByProjectId(projectId);
+        if (list != null) return ResponseEntity.ok(list);
         return ResponseEntity.notFound().build();
     }
 

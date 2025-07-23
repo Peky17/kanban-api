@@ -24,7 +24,7 @@ public class BucketLabel {
     @JoinColumn(name = "bucket_id")
     private Bucket bucket;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "created_by_id")
     private User createdBy;
 

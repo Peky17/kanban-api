@@ -1,7 +1,9 @@
 package com.kanban.app.controllers;
 
 import java.util.List;
+import java.util.Set;
 
+import com.kanban.app.models.dto.BucketDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,6 +33,13 @@ public class BucketLabelController {
     public ResponseEntity<BucketLabelDTO> getById(@PathVariable Long id) {
         BucketLabelDTO dto = bucketLabelService.findById(id);
         if (dto != null) return ResponseEntity.ok(dto);
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/labels/{bucketId}")
+    public ResponseEntity<Set<BucketLabelDTO>> getLabelsByBucketId(@PathVariable Long bucketId) {
+        Set<BucketLabelDTO> list = bucketLabelService.getLabelsByBucketId(bucketId);
+        if (list != null) return ResponseEntity.ok(list);
         return ResponseEntity.notFound().build();
     }
 

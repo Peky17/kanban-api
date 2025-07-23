@@ -11,7 +11,6 @@ public class BucketDTO {
     private LocalDate createdAt;
     private EntityIdentifier createdBy;
     private EntityIdentifier board;
-    private List<EntityIdentifier> tasks;
 
     public BucketDTO() {}
 
@@ -29,6 +28,4 @@ public class BucketDTO {
     public void setCreatedBy(EntityIdentifier createdBy) { this.createdBy = createdBy; }
     public EntityIdentifier getBoard() { return board; }
     public void setBoard(EntityIdentifier board) { this.board = board; }
-    public List<EntityIdentifier> getTasks() { return tasks; }
-    public void setTasks(List<EntityIdentifier> tasks) { this.tasks = tasks; }
 }
