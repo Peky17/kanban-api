@@ -14,4 +14,5 @@ public interface UserTaskService {
     void delete(Long id);
     Set<UserDTO> getUsersByTaskId(Long id);
     Set<TaskDTO> getTasksByUserId(Long id);
+    List<UserTaskDTO> getAssociationsByUserId(Long id);
 }

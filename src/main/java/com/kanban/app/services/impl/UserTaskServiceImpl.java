@@ -31,6 +31,12 @@ public class UserTaskServiceImpl implements UserTaskService {
     }
 
     @Override
+    public List<UserTaskDTO> getAssociationsByUserId(Long id) {
+        return userTaskRepository.getAllByUserId(id).stream().map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<UserTaskDTO> findAll() {
         return userTaskRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
     }

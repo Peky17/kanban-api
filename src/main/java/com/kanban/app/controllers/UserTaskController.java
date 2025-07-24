@@ -30,6 +30,11 @@ public class UserTaskController {
         return ResponseEntity.notFound().build();
     }
 
+    @GetMapping("/getAssociationsByUserId/{id}")
+    public List<UserTaskDTO> getAssociationsByUserId(@PathVariable Long id) {
+        return taskService.getAssociationsByUserId(id);
+    }
+
     @GetMapping("/users/{taskId}")
     public ResponseEntity<Set<UserDTO>> getUsersByTaskId(@PathVariable Long taskId) {
         Set<UserDTO> list = taskService.getUsersByTaskId(taskId);
