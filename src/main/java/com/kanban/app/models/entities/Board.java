@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,7 +34,7 @@ public class Board {
     @JsonBackReference
     private Project project;
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = false)
+    @OneToMany(mappedBy = "board", cascade = {CascadeType.ALL}, orphanRemoval = true)
     @JsonManagedReference
     private List<Bucket> buckets;
 

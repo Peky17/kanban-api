@@ -6,12 +6,14 @@ import java.util.Collections;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 
@@ -33,6 +35,18 @@ public class User implements UserDetails {
     private Role role;
     private String won;
     private String employeeNumber;
+    @OneToMany(mappedBy = "createdBy", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    private java.util.List<Project> projects;
+    @OneToMany(mappedBy = "createdBy", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    private java.util.List<Board> boards;
+    @OneToMany(mappedBy = "createdBy", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    private java.util.List<Bucket> buckets;
+    @OneToMany(mappedBy = "createdBy", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    private java.util.List<Task> tasks;
+    @OneToMany(mappedBy = "createdBy", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    private java.util.List<Subtask> subtasks;
+    @OneToMany(mappedBy = "createdBy", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    private java.util.List<BucketLabel> bucketLabels;
 
     public User() {
     }

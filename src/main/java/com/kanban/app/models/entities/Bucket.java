@@ -4,12 +4,15 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 
 @Entity
 public class Bucket {
@@ -30,8 +33,8 @@ public class Bucket {
     @JsonBackReference
     private Board board;
 
-    //@OneToMany(mappedBy = "bucket", cascade = CascadeType.ALL, orphanRemoval = false)
-    //private List<Task> tasks;
+    @OneToMany(mappedBy = "bucket", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    private List<Task> tasks;
 
     public Bucket() {}
     public Bucket(String name, String color, String description, LocalDate createdAt) {
