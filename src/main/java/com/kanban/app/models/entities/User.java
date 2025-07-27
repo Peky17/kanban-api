@@ -2,13 +2,16 @@ package com.kanban.app.models.entities;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 
@@ -29,7 +32,8 @@ public class User implements UserDetails {
     @JoinColumn(name = "role_id")
     private Role role;
 
-    public User() {}
+    public User() {
+    }
 
     public User(String name, String password) {
         this.name = name;
@@ -60,17 +64,49 @@ public class User implements UserDetails {
         this.role = role;
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-    public String getCellphone() { return cellphone; }
-    public void setCellphone(String cellphone) { this.cellphone = cellphone; }
-    public void setPassword(String password) { this.password = password; }
-    public Role getRole() { return role; }
-    public void setRole(Role role) { this.role = role; }
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getCellphone() {
+        return cellphone;
+    }
+
+    public void setCellphone(String cellphone) {
+        this.cellphone = cellphone;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
