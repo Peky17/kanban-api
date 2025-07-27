@@ -7,6 +7,8 @@ public class UserDTO {
     private String password;
     private String cellphone;
     private EntityIdentifier role;
+    private String won;
+    private String employeeNumber;
 
     public UserDTO() {}
 
@@ -29,4 +31,8 @@ public class UserDTO {
     public void setCellphone(String cellphone) { this.cellphone = cellphone; }
     public EntityIdentifier getRole() { return role; }
     public void setRole(EntityIdentifier role) { this.role = role; }
+    public String getWon() { return won; }
+    public void setWon(String won) { this.won = won; }
+    public String getEmployeeNumber() { return employeeNumber; }
+    public void setEmployeeNumber(String employeeNumber) { this.employeeNumber = employeeNumber; }
 }

@@ -43,6 +43,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User user) {
+        // WON y EmployeeNumber ya se reciben y persisten por el entity User
         User savedUser = authService.signup(user);
         return ResponseEntity.ok(savedUser);
     }
@@ -53,7 +54,7 @@ public class UserController {
             @RequestBody User user
     ) {
         user.setId(id);
-        // Para actualizar, se puede reutilizar signup para asegurar el password codificado
+        // WON y EmployeeNumber ya se reciben y persisten por el entity User
         User updatedUser = authService.signup(user);
         return ResponseEntity.ok(updatedUser);
     }

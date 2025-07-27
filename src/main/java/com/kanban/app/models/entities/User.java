@@ -31,6 +31,8 @@ public class User implements UserDetails {
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
+    private String won;
+    private String employeeNumber;
 
     public User() {
     }
@@ -62,6 +64,17 @@ public class User implements UserDetails {
         this.cellphone = cellphone;
         this.password = password;
         this.role = role;
+    }
+
+    public User(Long id, String name, String email, String cellphone, String password, Role role, String won, String employeeNumber) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.cellphone = cellphone;
+        this.password = password;
+        this.role = role;
+        this.won = won;
+        this.employeeNumber = employeeNumber;
     }
 
     public Long getId() {
@@ -106,6 +119,22 @@ public class User implements UserDetails {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public String getWon() {
+        return won;
+    }
+
+    public void setWon(String won) {
+        this.won = won;
+    }
+
+    public String getEmployeeNumber() {
+        return employeeNumber;
+    }
+
+    public void setEmployeeNumber(String employeeNumber) {
+        this.employeeNumber = employeeNumber;
     }
 
     @Override
