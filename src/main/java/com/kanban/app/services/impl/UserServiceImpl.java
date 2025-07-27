@@ -16,6 +16,8 @@ import com.kanban.app.services.interfaces.UserService;
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private com.kanban.app.repositories.RoleRepository roleRepository;
 
     @Override
     public UserDTO findById(Long id) {
@@ -60,7 +62,11 @@ public class UserServiceImpl implements UserService {
         entity.setCellphone(dto.getCellphone());
         entity.setWon(dto.getWon());
         entity.setEmployeeNumber(dto.getEmployeeNumber());
-        // role omitted for simplicity
+        // Asignar role si viene en el DTO
+        if (dto.getRole() != null && dto.getRole().getId() != null) {
+            entity.setRole(roleRepository.findById(dto.getRole().getId())
+                .orElseThrow(() -> new RuntimeException("Role not found with id: " + dto.getRole().getId())));
+        }
         return entity;
     }
 }
