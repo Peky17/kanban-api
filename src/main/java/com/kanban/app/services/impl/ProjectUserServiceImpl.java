@@ -1,24 +1,23 @@
 package com.kanban.app.services.impl;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.kanban.app.models.dto.EntityIdentifier;
 import com.kanban.app.models.dto.ProjectDTO;
 import com.kanban.app.models.dto.ProjectUserDTO;
 import com.kanban.app.models.dto.UserDTO;
-import com.kanban.app.models.entities.Bucket;
 import com.kanban.app.models.entities.Project;
 import com.kanban.app.models.entities.ProjectUser;
 import com.kanban.app.models.entities.User;
 import com.kanban.app.repositories.ProjectRepository;
 import com.kanban.app.repositories.ProjectUserRepository;
 import com.kanban.app.services.interfaces.ProjectUserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class ProjectUserServiceImpl implements ProjectUserService {
@@ -26,6 +25,8 @@ public class ProjectUserServiceImpl implements ProjectUserService {
     private ProjectUserRepository projectUserRepository;
     @Autowired
     private ProjectRepository projectRepository;
+    @Autowired
+    private com.kanban.app.repositories.UserRepository userRepository;
 
     @Override
     public ProjectUserDTO findById(Long id) {
@@ -109,14 +110,14 @@ public class ProjectUserServiceImpl implements ProjectUserService {
         ProjectUser entity = new ProjectUser();
         entity.setId(dto.getId());
         // project relationship
-        Project project = new Project();
         Long projectId = dto.getProject().getId();
-        project.setId(projectId);
+        Project project = projectRepository.findById(projectId)
+            .orElseThrow(() -> new RuntimeException("Project not found with id: " + projectId));
         entity.setProject(project);
         // User relationship
-        User user = new User();
         Long userId = dto.getUser().getId();
-        user.setId(userId);
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
         entity.setUser(user);
         return entity;
     }

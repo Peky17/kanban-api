@@ -1,5 +1,13 @@
 package com.kanban.app.services.impl;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.kanban.app.models.dto.EntityIdentifier;
 import com.kanban.app.models.dto.TaskDTO;
 import com.kanban.app.models.dto.UserDTO;
@@ -8,22 +16,16 @@ import com.kanban.app.models.entities.Task;
 import com.kanban.app.models.entities.User;
 import com.kanban.app.models.entities.UserTask;
 import com.kanban.app.repositories.UserTaskRepository;
-import com.kanban.app.services.auth.AuthService;
 import com.kanban.app.services.interfaces.UserTaskService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class UserTaskServiceImpl implements UserTaskService {
     @Autowired
     private UserTaskRepository userTaskRepository;
     @Autowired
-    private AuthService authService;
+    private com.kanban.app.repositories.UserRepository userRepository;
+    @Autowired
+    private com.kanban.app.repositories.TaskRepository taskRepository;
 
     @Override
     public UserTaskDTO findById(Long id) {
@@ -53,10 +55,10 @@ public class UserTaskServiceImpl implements UserTaskService {
     }
 
     @Override
-    public Set<UserDTO> getUsersByTaskId(Long id){
+    public Set<UserDTO> getUsersByTaskId(Long id) {
         List<UserTask> userTasks = userTaskRepository.getAllByTaskId(id);
         Set<UserDTO> userSet = new HashSet<>();
-        for(UserTask userTask : userTasks){
+        for (UserTask userTask : userTasks) {
             UserDTO dto = new UserDTO();
             User entity = userTask.getUser();
             dto.setId(entity.getId());
@@ -73,10 +75,10 @@ public class UserTaskServiceImpl implements UserTaskService {
     }
 
     @Override
-    public Set<TaskDTO> getTasksByUserId(Long id){
+    public Set<TaskDTO> getTasksByUserId(Long id) {
         List<UserTask> tasksUser = userTaskRepository.getAllByUserId(id);
         Set<TaskDTO> tasksSet = new HashSet<>();
-        for(UserTask taskUser : tasksUser){
+        for (UserTask taskUser : tasksUser) {
             TaskDTO dto = new TaskDTO();
             Task entity = taskUser.getTask();
             dto.setId(entity.getId());
@@ -120,14 +122,14 @@ public class UserTaskServiceImpl implements UserTaskService {
         entity.setId(dto.getId());
         entity.setCompleted(dto.isCompleted());
         // User relationship
-        User user = new User();
         Long userId = dto.getUser().getId();
-        user.setId(userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
         entity.setUser(user);
         // Task relationship
-        Task task = new Task();
         Long taskId = dto.getTask().getId();
-        task.setId(taskId);
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
         entity.setTask(task);
         // subtasks omitted for simplicity
         return entity;
