@@ -69,5 +69,14 @@ public class Project {
     public User getCreatedBy() { return createdBy; }
     public void setCreatedBy(User createdBy) { this.createdBy = createdBy; }
     public List<Board> getBoards() { return boards; }
-    public void setBoards(List<Board> boards) { this.boards = boards; }
+    public void setBoards(List<Board> boards) {
+        if (this.boards == null) {
+            this.boards = boards;
+        } else {
+            this.boards.clear();
+            if (boards != null) {
+                this.boards.addAll(boards);
+            }
+        }
+    }
 }

@@ -1,7 +1,6 @@
 package com.kanban.app.models.dto;
 
 import java.time.LocalDate;
-import java.util.List;
 
 public class TaskDTO {
     private Long id;
@@ -13,6 +12,7 @@ public class TaskDTO {
     private String description;
     private EntityIdentifier createdBy;
     private EntityIdentifier bucket;
+    private java.util.List<SubtaskDTO> subtasks;
 
     public TaskDTO() {}
 
@@ -41,4 +41,6 @@ public class TaskDTO {
     public void setCreatedBy(EntityIdentifier createdBy) { this.createdBy = createdBy; }
     public EntityIdentifier getBucket() { return bucket; }
     public void setBucket(EntityIdentifier bucket) { this.bucket = bucket; }
+    public java.util.List<SubtaskDTO> getSubtasks() { return subtasks; }
+    public void setSubtasks(java.util.List<SubtaskDTO> subtasks) { this.subtasks = subtasks; }
 }

@@ -69,5 +69,14 @@ public class Board {
     public Project getProject() { return project; }
     public void setProject(Project project) { this.project = project; }
     public List<Bucket> getBuckets() { return buckets; }
-    public void setBuckets(List<Bucket> buckets) { this.buckets = buckets; }
+    public void setBuckets(List<Bucket> buckets) {
+        if (this.buckets == null) {
+            this.buckets = buckets;
+        } else {
+            this.buckets.clear();
+            if (buckets != null) {
+                this.buckets.addAll(buckets);
+            }
+        }
+    }
 }

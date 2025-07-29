@@ -5,16 +5,17 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.kanban.app.models.entities.Project;
-import com.kanban.app.models.entities.User;
-import com.kanban.app.services.auth.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.kanban.app.models.dto.BoardDTO;
+import com.kanban.app.models.dto.BucketDTO;
 import com.kanban.app.models.dto.EntityIdentifier;
 import com.kanban.app.models.entities.Board;
+import com.kanban.app.models.entities.Bucket;
+import com.kanban.app.models.entities.Project;
 import com.kanban.app.repositories.BoardRepository;
+import com.kanban.app.services.auth.AuthService;
 import com.kanban.app.services.interfaces.BoardService;
 
 @Service
@@ -36,7 +37,41 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public BoardDTO save(BoardDTO dto) {
-        Board entity = toEntity(dto);
+        Board entity;
+        boolean isUpdate = dto.getId() != null && boardRepository.existsById(dto.getId());
+        if (isUpdate) {
+            entity = boardRepository.findById(dto.getId()).orElseThrow();
+            entity.setName(dto.getName());
+            entity.setDescription(dto.getDescription());
+            entity.setCreatedAt(dto.getCreatedAt());
+            // Project relationship
+            Long projectId = dto.getProject().getId();
+            Project project = new Project();
+            project.setId(projectId);
+            entity.setProject(project);
+            // User relationship (set the user in session)
+            entity.setCreatedBy(authService.getCurrentUser());
+            // Buckets
+            if (dto.getBuckets() != null) {
+                if (entity.getBuckets() == null) {
+                    entity.setBuckets(new java.util.ArrayList<>());
+                }
+                entity.getBuckets().clear();
+                entity.getBuckets().addAll(dto.getBuckets().stream().map(bucketDTO -> {
+                    Bucket bucket = new Bucket();
+                    bucket.setId(bucketDTO.getId());
+                    bucket.setName(bucketDTO.getName());
+                    bucket.setDescription(bucketDTO.getDescription());
+                    bucket.setCreatedAt(bucketDTO.getCreatedAt());
+                    bucket.setBoard(entity);
+                    return bucket;
+                }).collect(Collectors.toList()));
+            } else if (entity.getBuckets() != null) {
+                entity.getBuckets().clear();
+            }
+        } else {
+            entity = toEntity(dto);
+        }
         return toDTO(boardRepository.save(entity));
     }
 
@@ -83,6 +118,18 @@ public class BoardServiceImpl implements BoardService {
         Long userId = board.getCreatedBy().getId();
         userIdentity.setId(userId);
         dto.setCreatedBy(userIdentity);
+        // Buckets
+        if (board.getBuckets() != null) {
+            dto.setBuckets(board.getBuckets().stream().map(bucket -> {
+                BucketDTO bucketDTO = new BucketDTO();
+                bucketDTO.setId(bucket.getId());
+                bucketDTO.setName(bucket.getName());
+                bucketDTO.setDescription(bucket.getDescription());
+                bucketDTO.setCreatedAt(bucket.getCreatedAt());
+                // Board y createdBy pueden omitirse o mapearse según necesidad
+                return bucketDTO;
+            }).collect(Collectors.toList()));
+        }
         return dto;
     }
 
@@ -99,6 +146,18 @@ public class BoardServiceImpl implements BoardService {
         entity.setProject(project);
         // User relationship (set the user in session)
         entity.setCreatedBy(authService.getCurrentUser());
+        // Buckets
+        if (dto.getBuckets() != null) {
+            entity.setBuckets(dto.getBuckets().stream().map(bucketDTO -> {
+                Bucket bucket = new Bucket();
+                bucket.setId(bucketDTO.getId());
+                bucket.setName(bucketDTO.getName());
+                bucket.setDescription(bucketDTO.getDescription());
+                bucket.setCreatedAt(bucketDTO.getCreatedAt());
+                bucket.setBoard(entity);
+                return bucket;
+            }).collect(Collectors.toList()));
+        }
         return entity;
     }
 }

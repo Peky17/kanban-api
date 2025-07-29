@@ -82,5 +82,14 @@ public class Task {
     }
 
     public List<Subtask> getSubtasks() { return subtasks; }
-    public void setSubtasks(List<Subtask> subtasks) { this.subtasks = subtasks; }
+    public void setSubtasks(List<Subtask> subtasks) {
+        if (this.subtasks == null) {
+            this.subtasks = subtasks;
+        } else {
+            this.subtasks.clear();
+            if (subtasks != null) {
+                this.subtasks.addAll(subtasks);
+            }
+        }
+    }
 }

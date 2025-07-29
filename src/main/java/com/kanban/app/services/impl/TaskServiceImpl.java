@@ -5,15 +5,17 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.kanban.app.models.entities.Bucket;
-import com.kanban.app.services.auth.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.kanban.app.models.dto.EntityIdentifier;
+import com.kanban.app.models.dto.SubtaskDTO;
 import com.kanban.app.models.dto.TaskDTO;
+import com.kanban.app.models.entities.Bucket;
+import com.kanban.app.models.entities.Subtask;
 import com.kanban.app.models.entities.Task;
 import com.kanban.app.repositories.TaskRepository;
+import com.kanban.app.services.auth.AuthService;
 import com.kanban.app.services.interfaces.TaskService;
 
 @Service
@@ -88,7 +90,23 @@ public class TaskServiceImpl implements TaskService {
         Long userId = task.getCreatedBy().getId();
         userIdentity.setId(userId);
         dto.setCreatedBy(userIdentity);
-        // Subtasks omitted for simplicity
+        // Subtasks
+        if (task.getSubtasks() != null) {
+            java.util.List<SubtaskDTO> subtaskDTOs = task.getSubtasks().stream()
+                .map(subtask -> {
+                    SubtaskDTO subtaskDTO = new SubtaskDTO();
+                    subtaskDTO.setId(subtask.getId());
+                    subtaskDTO.setName(subtask.getName());
+                    subtaskDTO.setCreatedAt(subtask.getCreatedAt());
+                    subtaskDTO.setPriority(subtask.getPriority());
+                    subtaskDTO.setStartdDate(subtask.getStartdDate());
+                    subtaskDTO.setDueDate(subtask.getDueDate());
+                    // createdBy y task pueden omitirse o mapearse según necesidad
+                    return subtaskDTO;
+                })
+                .collect(java.util.stream.Collectors.toList());
+            dto.setSubtasks(subtaskDTOs);
+        }
         return dto;
     }
 
@@ -107,7 +125,36 @@ public class TaskServiceImpl implements TaskService {
         Bucket bucket = new Bucket();
         bucket.setId(dto.getBucket().getId());
         entity.setBucket(bucket);
-        // subtasks omitted for simplicity
+        // Subtasks
+        if (dto.getSubtasks() != null) {
+            if (entity.getSubtasks() == null) {
+                entity.setSubtasks(dto.getSubtasks().stream().map(subtaskDTO -> {
+                    Subtask subtask = new Subtask();
+                    subtask.setId(subtaskDTO.getId());
+                    subtask.setName(subtaskDTO.getName());
+                    subtask.setCreatedAt(subtaskDTO.getCreatedAt());
+                    subtask.setPriority(subtaskDTO.getPriority());
+                    subtask.setStartdDate(subtaskDTO.getStartdDate());
+                    subtask.setDueDate(subtaskDTO.getDueDate());
+                    subtask.setTask(entity);
+                    // createdBy puede omitirse o mapearse según necesidad
+                    return subtask;
+                }).collect(java.util.stream.Collectors.toList()));
+            } else {
+                entity.getSubtasks().clear();
+                entity.getSubtasks().addAll(dto.getSubtasks().stream().map(subtaskDTO -> {
+                    Subtask subtask = new Subtask();
+                    subtask.setId(subtaskDTO.getId());
+                    subtask.setName(subtaskDTO.getName());
+                    subtask.setCreatedAt(subtaskDTO.getCreatedAt());
+                    subtask.setPriority(subtaskDTO.getPriority());
+                    subtask.setStartdDate(subtaskDTO.getStartdDate());
+                    subtask.setDueDate(subtaskDTO.getDueDate());
+                    subtask.setTask(entity);
+                    return subtask;
+                }).collect(java.util.stream.Collectors.toList()));
+            }
+        }
         return entity;
     }
 }
