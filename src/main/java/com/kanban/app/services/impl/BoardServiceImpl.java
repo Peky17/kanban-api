@@ -51,23 +51,24 @@ public class BoardServiceImpl implements BoardService {
             entity.setProject(project);
             // User relationship (set the user in session)
             entity.setCreatedBy(authService.getCurrentUser());
-            // Buckets
+            // Buckets: mantener los existentes, eliminar los que no estén en el DTO, agregar/actualizar los que vienen
             if (dto.getBuckets() != null) {
-                if (entity.getBuckets() == null) {
-                    entity.setBuckets(new java.util.ArrayList<>());
-                }
-                entity.getBuckets().clear();
-                entity.getBuckets().addAll(dto.getBuckets().stream().map(bucketDTO -> {
-                    Bucket bucket = new Bucket();
+                entity.getBuckets().removeIf(bucket -> dto.getBuckets().stream().noneMatch(b -> b.getId() != null && b.getId().equals(bucket.getId())));
+                for (BucketDTO bucketDTO : dto.getBuckets()) {
+                    Bucket bucket = null;
+                    if (bucketDTO.getId() != null) {
+                        bucket = entity.getBuckets().stream().filter(b -> b.getId().equals(bucketDTO.getId())).findFirst().orElse(null);
+                    }
+                    if (bucket == null) {
+                        bucket = new Bucket();
+                        entity.getBuckets().add(bucket);
+                    }
                     bucket.setId(bucketDTO.getId());
                     bucket.setName(bucketDTO.getName());
                     bucket.setDescription(bucketDTO.getDescription());
                     bucket.setCreatedAt(bucketDTO.getCreatedAt());
                     bucket.setBoard(entity);
-                    return bucket;
-                }).collect(Collectors.toList()));
-            } else if (entity.getBuckets() != null) {
-                entity.getBuckets().clear();
+                }
             }
         } else {
             entity = toEntity(dto);

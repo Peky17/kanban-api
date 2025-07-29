@@ -37,7 +37,46 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public TaskDTO save(TaskDTO dto) {
-        Task entity = toEntity(dto);
+        Task entity;
+        boolean isUpdate = dto.getId() != null && taskRepository.existsById(dto.getId());
+        if (isUpdate) {
+            entity = taskRepository.findById(dto.getId()).orElseThrow();
+            entity.setName(dto.getName());
+            entity.setCreatedAt(dto.getCreatedAt());
+            entity.setPriority(dto.getPriority());
+            entity.setStartDate(dto.getStartDate());
+            entity.setDueDate(dto.getDueDate());
+            entity.setDescription(dto.getDescription());
+            // User relationship (set the user in session)
+            entity.setCreatedBy(authService.getCurrentUser());
+            // bucket relationship
+            Bucket bucket = new Bucket();
+            bucket.setId(dto.getBucket().getId());
+            entity.setBucket(bucket);
+            // Subtasks: mantener los existentes, eliminar los que no estén en el DTO, agregar/actualizar los que vienen
+            if (dto.getSubtasks() != null) {
+                entity.getSubtasks().removeIf(subtask -> dto.getSubtasks().stream().noneMatch(s -> s.getId() != null && s.getId().equals(subtask.getId())));
+                for (SubtaskDTO subtaskDTO : dto.getSubtasks()) {
+                    Subtask subtask = null;
+                    if (subtaskDTO.getId() != null) {
+                        subtask = entity.getSubtasks().stream().filter(s -> s.getId().equals(subtaskDTO.getId())).findFirst().orElse(null);
+                    }
+                    if (subtask == null) {
+                        subtask = new Subtask();
+                        entity.getSubtasks().add(subtask);
+                    }
+                    subtask.setId(subtaskDTO.getId());
+                    subtask.setName(subtaskDTO.getName());
+                    subtask.setCreatedAt(subtaskDTO.getCreatedAt());
+                    subtask.setPriority(subtaskDTO.getPriority());
+                    subtask.setStartdDate(subtaskDTO.getStartdDate());
+                    subtask.setDueDate(subtaskDTO.getDueDate());
+                    subtask.setTask(entity);
+                }
+            }
+        } else {
+            entity = toEntity(dto);
+        }
         return toDTO(taskRepository.save(entity));
     }
 

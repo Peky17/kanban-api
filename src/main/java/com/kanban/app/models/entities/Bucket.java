@@ -67,4 +67,6 @@ public class Bucket {
     public void setCreatedBy(User createdBy) { this.createdBy = createdBy; }
     public Board getBoard() { return board; }
     public void setBoard(Board board) { this.board = board; }
+    public List<Task> getTasks() { return tasks; }
+    public void setTasks(List<Task> tasks) { this.tasks = tasks; }
 }
