@@ -45,20 +45,26 @@ public class ProjectServiceImpl implements ProjectService {
             entity.setDueDate(dto.getDueDate());
             // User relationship (set the user in session)
             entity.setCreatedBy(authService.getCurrentUser());
-            // Boards
+            // Boards: mantener los existentes, eliminar los que no estén en el DTO, agregar/actualizar los que vienen
             if (dto.getBoards() != null) {
-                entity.getBoards().clear();
-                entity.getBoards().addAll(dto.getBoards().stream().map(boardDTO -> {
-                    Board board = new Board();
+                // Eliminar boards que no están en el DTO
+                entity.getBoards().removeIf(board -> dto.getBoards().stream().noneMatch(b -> b.getId() != null && b.getId().equals(board.getId())));
+                // Agregar o actualizar boards del DTO
+                for (BoardDTO boardDTO : dto.getBoards()) {
+                    Board board = null;
+                    if (boardDTO.getId() != null) {
+                        board = entity.getBoards().stream().filter(b -> b.getId().equals(boardDTO.getId())).findFirst().orElse(null);
+                    }
+                    if (board == null) {
+                        board = new Board();
+                        entity.getBoards().add(board);
+                    }
                     board.setId(boardDTO.getId());
                     board.setName(boardDTO.getName());
                     board.setDescription(boardDTO.getDescription());
                     board.setCreatedAt(boardDTO.getCreatedAt());
                     board.setProject(entity);
-                    return board;
-                }).collect(Collectors.toList()));
-            } else if (entity.getBoards() != null) {
-                entity.getBoards().clear();
+                }
             }
         } else {
             entity = toEntity(dto);
