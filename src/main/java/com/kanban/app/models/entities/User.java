@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,6 +25,7 @@ public class User implements UserDetails {
     private Long id;
     @NotNull(message = "Name is required")
     private String name;
+    @Column(unique = true)
     @Email(message = "Email should be valid")
     private String email;
     @NotNull(message = "Cellphone is required")
@@ -34,18 +36,19 @@ public class User implements UserDetails {
     @JoinColumn(name = "role_id")
     private Role role;
     private String won;
+    @Column(unique = true)
     private String employeeNumber;
-    @OneToMany(mappedBy = "createdBy", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToMany(mappedBy = "createdBy", cascade = { CascadeType.ALL }, orphanRemoval = true)
     private java.util.List<Project> projects;
-    @OneToMany(mappedBy = "createdBy", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToMany(mappedBy = "createdBy", cascade = { CascadeType.ALL }, orphanRemoval = true)
     private java.util.List<Board> boards;
-    @OneToMany(mappedBy = "createdBy", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToMany(mappedBy = "createdBy", cascade = { CascadeType.ALL }, orphanRemoval = true)
     private java.util.List<Bucket> buckets;
-    @OneToMany(mappedBy = "createdBy", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToMany(mappedBy = "createdBy", cascade = { CascadeType.ALL }, orphanRemoval = true)
     private java.util.List<Task> tasks;
-    @OneToMany(mappedBy = "createdBy", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToMany(mappedBy = "createdBy", cascade = { CascadeType.ALL }, orphanRemoval = true)
     private java.util.List<Subtask> subtasks;
-    @OneToMany(mappedBy = "createdBy", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToMany(mappedBy = "createdBy", cascade = { CascadeType.ALL }, orphanRemoval = true)
     private java.util.List<BucketLabel> bucketLabels;
 
     public User() {
@@ -80,7 +83,8 @@ public class User implements UserDetails {
         this.role = role;
     }
 
-    public User(Long id, String name, String email, String cellphone, String password, Role role, String won, String employeeNumber) {
+    public User(Long id, String name, String email, String cellphone, String password, Role role, String won,
+            String employeeNumber) {
         this.id = id;
         this.name = name;
         this.email = email;
