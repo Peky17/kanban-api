@@ -5,10 +5,10 @@ FROM eclipse-temurin:17-jdk-alpine
 LABEL maintainer="Enrique <ebgvdeveloper@gmail.com>"
 
 # Create a directory for the app
-WORKDIR /congratulations-api
+WORKDIR /kanban-api
 
 # Copy the jar file into the container
-COPY target/congratulations-api-0.0.1-SNAPSHOT.jar /congratulations-api/congrats-api.jar
+COPY target/kanban-api-0.0.1-SNAPSHOT.jar /kanban-api/kanban-api.jar
 
 # Expose the port the app runs in
 EXPOSE 8080
